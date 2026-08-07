@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Tailwind v4 is CSS-first: there is no tailwind.config.js. Brand colors are set
+  in the :root / .dark blocks below as OKLCH values, and @theme inline maps them
+  onto Tailwind utility names (bg-primary, text-muted-foreground, etc.).
+
+  To brand this site, change ONLY the values in :root and .dark. Everything else
+  follows automatically.
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.625rem;
+
+  /*
+    Default to a system stack: it renders instantly, needs no network at build
+    time, and avoids the EU privacy question around Google Fonts. Swap in
+    next/font (google or local) during branding if the client specified a
+    typeface — see references/brand-and-content.md.
+  */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- BRAND TOKENS: edit these ---- */
+  /* Fischer Tropitel — jungle green primary, warm sand accent. Bold & colorful
+     per the client brief; no brand hex supplied, so these are derived. */
+  --primary: oklch(0.45 0.12 152);
+  --primary-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.95 0.05 85);
+  --accent-foreground: oklch(0.35 0.09 152);
+  /* ---------------------------------- */
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.2 0.02 152);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.02 152);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.02 152);
+  --secondary: oklch(0.96 0.02 152);
+  --secondary-foreground: oklch(0.35 0.09 152);
+  --muted: oklch(0.96 0.015 152);
+  --muted-foreground: oklch(0.5 0.03 152);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.91 0.02 152);
+  --input: oklch(0.91 0.02 152);
+  --ring: oklch(0.45 0.12 152);
+}
+
+.dark {
+  --primary: oklch(0.78 0.14 152);
+  --primary-foreground: oklch(0.2 0.05 152);
+  --accent: oklch(0.3 0.05 152);
+  --accent-foreground: oklch(0.95 0.05 85);
+
+  --background: oklch(0.18 0.03 152);
+  --foreground: oklch(0.97 0.01 152);
+  --card: oklch(0.23 0.04 152);
+  --card-foreground: oklch(0.97 0.01 152);
+  --popover: oklch(0.23 0.04 152);
+  --popover-foreground: oklch(0.97 0.01 152);
+  --secondary: oklch(0.28 0.04 152);
+  --secondary-foreground: oklch(0.97 0.01 152);
+  --muted: oklch(0.28 0.04 152);
+  --muted-foreground: oklch(0.75 0.03 152);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: oklch(0.78 0.14 152);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+  }
 }
