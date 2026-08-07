@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Bath,
   BedDouble,
@@ -35,10 +36,12 @@ const CAL_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_CAL_LINK);
 // published. An Airbnb link takes priority over the Cal.com popup.
 const AIRBNB_URLS: (string | null)[] = [null, null, null];
 
-const CASA_HEADER_CLASSES = [
-  "from-emerald-700 to-emerald-900",
-  "from-teal-600 to-emerald-800",
-  "from-lime-600 to-emerald-700",
+// Professional photos from the client's shoot (Gecko Visuals). The two
+// connected casas are the tan duplex — door signs confirm which half is which.
+const CASA_IMAGES = [
+  { src: "/images/casa-cascada.jpg", alt: "Casa Cascada exterior" },
+  { src: "/images/loads-of-toads.jpg", alt: "Loads of Toads exterior" },
+  { src: "/images/casa-verde.jpg", alt: "Casa Verde exterior" },
 ];
 
 const QUICK_FACT_ICONS = [Waves, Sun, Flame, Fish, Leaf, Users];
@@ -113,12 +116,17 @@ export default async function Home({
       </header>
 
       <main id="top">
-        {/* Hero.
-            TODO: swap the gradient background for the client's professional
-            photos (she has a pro photo set + video in Google Drive). */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-800 text-white">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-amber-400/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-lime-400/10 blur-3xl" />
+        {/* Hero — property photo under a dark emerald wash for text contrast. */}
+        <section className="relative overflow-hidden bg-emerald-950 text-white">
+          <Image
+            src="/images/hero.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-950/70 to-emerald-900/40" />
           <div className="relative mx-auto max-w-6xl px-4 py-24 sm:py-32">
             <p className="text-sm font-bold uppercase tracking-widest text-amber-400">
               {t.hero.eyebrow}
@@ -179,11 +187,16 @@ export default async function Home({
                   key={casa.name}
                   className="flex flex-col overflow-hidden pt-0"
                 >
-                  {/* TODO: replace gradient header with this casa's photo. */}
-                  <div
-                    className={`flex h-40 items-end bg-gradient-to-br ${CASA_HEADER_CLASSES[i]} p-5`}
-                  >
-                    <div className="text-white">
+                  <div className="relative flex h-48 items-end p-5">
+                    <Image
+                      src={CASA_IMAGES[i].src}
+                      alt={CASA_IMAGES[i].alt}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/85 via-emerald-950/25 to-transparent" />
+                    <div className="relative text-white">
                       <p className="text-2xl font-extrabold">{casa.name}</p>
                       <p className="text-lg font-semibold text-amber-300">
                         {casa.price}
