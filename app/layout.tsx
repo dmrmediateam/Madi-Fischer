@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Fustat } from "next/font/google";
 
 import "./globals.css";
+
+// Fustat — the rounded geometric sans that defines the IFF-style art
+// direction. Fetched at build time; the build environment must reach
+// fonts.googleapis.com.
+const sans = Fustat({ subsets: ["latin"], variable: "--font-sans" });
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.fischertropitel.com";
@@ -38,7 +44,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className={`${sans.variable} scroll-smooth`}>
       <body className="font-sans">
         {children}
         <script

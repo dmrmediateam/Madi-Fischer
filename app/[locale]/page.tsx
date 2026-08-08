@@ -1,26 +1,19 @@
 import Image from "next/image";
 import {
-  Bath,
-  BedDouble,
+  ArrowRight,
   Car,
   CloudRain,
-  Fish,
-  Flame,
   Leaf,
   Mail,
   MapPin,
-  Mountain,
   Phone,
-  Sun,
-  UtensilsCrossed,
-  Users,
-  Waves,
   Zap,
 } from "lucide-react";
 
+import { Item, Lift, Reveal, Stagger } from "@/components/animate";
 import { BookButton, BookingCalendar } from "@/components/booking";
+import { SiteMenu } from "@/components/mobile-nav";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactForm } from "@/components/contact-form";
 import { dict, type Locale } from "@/lib/i18n";
 
@@ -36,39 +29,38 @@ const CAL_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_CAL_LINK);
 // published. An Airbnb link takes priority over the Cal.com popup.
 const AIRBNB_URLS: (string | null)[] = [null, null, null];
 
-// Professional photos from the client's shoot (Gecko Visuals). The two
-// connected casas are the tan duplex — door signs confirm which half is which.
 const CASA_IMAGES = [
   { src: "/images/casa-cascada.jpg", alt: "Casa Cascada exterior" },
   { src: "/images/loads-of-toads.jpg", alt: "Loads of Toads exterior" },
   { src: "/images/casa-verde.jpg", alt: "Casa Verde exterior" },
 ];
 
-const QUICK_FACT_ICONS = [Waves, Sun, Flame, Fish, Leaf, Users];
-const AREA_ICONS = [Fish, Leaf, Flame, Mountain];
 const KNOW_ICONS = [Car, Zap, Leaf, CloudRain];
 
-function SectionHeading({
-  eyebrow,
-  title,
+/** IFF-style pill CTA: uppercase, letter-spaced, arrow. */
+function pillClasses(variant: "light" | "dark") {
+  const base =
+    "rounded-full px-7 py-6 text-sm font-bold uppercase tracking-widest";
+  return variant === "light"
+    ? `${base} bg-white text-emerald-900 hover:bg-amber-50`
+    : `${base} bg-emerald-900 text-white hover:bg-emerald-800`;
+}
+
+function Eyebrow({
   children,
+  onDark = false,
 }: {
-  eyebrow: string;
-  title: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  onDark?: boolean;
 }) {
   return (
-    <div className="mx-auto max-w-2xl text-center">
-      <p className="text-sm font-bold uppercase tracking-widest text-amber-600">
-        {eyebrow}
-      </p>
-      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        {title}
-      </h2>
-      {children ? (
-        <p className="mt-4 text-lg text-muted-foreground">{children}</p>
-      ) : null}
-    </div>
+    <p
+      className={`text-sm font-bold uppercase tracking-[0.2em] ${
+        onDark ? "text-amber-400" : "text-emerald-700"
+      }`}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -82,288 +74,310 @@ export default async function Home({
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <a href="#top" className="text-lg font-extrabold tracking-tight">
-            Fischer <span className="text-emerald-700">Tropitel</span>
+      {/* IFF-style header: solid brand band, wordmark left, CTA + menu square right. */}
+      <header className="sticky top-0 z-50 bg-emerald-950 text-white">
+        <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between pl-4">
+          <a href="#top" className="text-xl font-bold tracking-tight">
+            Fischer <span className="text-amber-400">Tropitel</span>
           </a>
-          <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <a href="#casas" className="hover:text-emerald-700">
-              {t.nav.casas}
-            </a>
-            <a href="#area" className="hover:text-emerald-700">
-              {t.nav.area}
-            </a>
-            <a href="#know" className="hover:text-emerald-700">
-              {t.nav.know}
-            </a>
-            <a href="#contact" className="hover:text-emerald-700">
-              {t.nav.contact}
-            </a>
-          </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex h-16 items-center gap-4">
             <a
               href={t.nav.switchHref}
-              className="text-sm font-semibold text-emerald-700 hover:underline"
+              className="hidden text-sm font-semibold uppercase tracking-widest text-emerald-200 hover:text-white sm:block"
             >
               {t.nav.switchLabel}
             </a>
-            <Button asChild size="sm">
+            <Button
+              asChild
+              size="sm"
+              className="hidden rounded-full bg-white px-5 font-bold uppercase tracking-widest text-emerald-900 hover:bg-amber-50 sm:inline-flex"
+            >
               <a href={CAL_CONFIGURED ? "#book" : "#contact"}>{t.nav.cta}</a>
             </Button>
+            <SiteMenu
+              links={[
+                { href: "#casas", label: t.nav.casas },
+                { href: "#area", label: t.nav.area },
+                { href: "#know", label: t.nav.know },
+                { href: "#contact", label: t.nav.contact },
+              ]}
+              switchLabel={t.nav.switchLabel}
+              switchHref={t.nav.switchHref}
+            />
           </div>
         </div>
       </header>
 
       <main id="top">
-        {/* Hero — property photo under a dark emerald wash for text contrast. */}
-        <section className="relative overflow-hidden bg-emerald-950 text-white">
-          <Image
-            src="/images/hero.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-950/70 to-emerald-900/40" />
-          <div className="relative mx-auto max-w-6xl px-4 py-24 sm:py-32">
-            <p className="text-sm font-bold uppercase tracking-widest text-amber-400">
-              {t.hero.eyebrow}
-            </p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight sm:text-6xl">
-              {t.hero.title}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg text-emerald-100 sm:text-xl">
-              {t.hero.sub}
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="bg-amber-400 text-emerald-950 hover:bg-amber-300"
-              >
-                <a href="#casas">{t.hero.ctaPrimary}</a>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
-              >
-                <a href="#know">{t.hero.ctaSecondary}</a>
-              </Button>
+        {/* Brand band: centered display type + pill CTA, IFF announcement style. */}
+        <section className="bg-emerald-950 text-white">
+          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:py-28">
+            <Reveal immediate>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400">
+                {t.hero.eyebrow}
+              </p>
+            </Reveal>
+            <Reveal immediate delay={0.1}>
+              <h1 className="mt-6 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">
+                {t.hero.title}
+              </h1>
+            </Reveal>
+            <Reveal immediate delay={0.2}>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-100 sm:text-xl">
+                {t.hero.sub}
+              </p>
+            </Reveal>
+            <Reveal immediate delay={0.3}>
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
+                <Button asChild size="lg" className={pillClasses("light")}>
+                  <a href="#casas">
+                    {t.hero.ctaPrimary}
+                    <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                  </a>
+                </Button>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Full-bleed property image card. */}
+        <section className="bg-emerald-950 pb-6">
+          <Reveal immediate delay={0.35} className="mx-auto max-w-7xl px-4">
+            <div className="relative h-[46vh] min-h-[320px] overflow-hidden rounded-3xl sm:h-[60vh]">
+              <Image
+                src="/images/hero.jpg"
+                alt="The Fischer Tropitel property in the jungle above Quepos"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/60 via-transparent to-transparent" />
+              <p className="absolute bottom-5 left-6 text-sm font-bold uppercase tracking-[0.2em] text-white/90">
+                Quepos · Costa Rica
+              </p>
             </div>
+          </Reveal>
+        </section>
+
+        {/* Stats band — IFF "your experiences, our technologies" pattern. */}
+        <section className="bg-background">
+          <div className="mx-auto max-w-6xl px-4 py-20">
+            <Reveal>
+              <Eyebrow>{t.stats.eyebrow}</Eyebrow>
+            </Reveal>
+            <Stagger className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+              {t.stats.items.map(({ value, caption }) => (
+                <Item key={caption}>
+                  <p className="text-4xl font-medium tracking-tight text-emerald-900 sm:text-5xl">
+                    {value}
+                  </p>
+                  <p className="mt-3 text-muted-foreground">{caption}</p>
+                </Item>
+              ))}
+            </Stagger>
           </div>
         </section>
 
-        {/* Quick facts */}
-        <section className="border-b bg-secondary">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-10 sm:grid-cols-2 lg:grid-cols-3">
-            {t.quickFacts.map((text, i) => {
-              const Icon = QUICK_FACT_ICONS[i];
-              return (
-                <div key={text} className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white">
-                    <Icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  <p className="font-medium">{text}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* The casas — stacked full-width image cards, IFF solutions pattern. */}
+        <section id="casas" className="scroll-mt-16 border-t bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-20">
+            <Reveal>
+              <div className="max-w-3xl">
+                <Eyebrow>{t.casas.eyebrow}</Eyebrow>
+                <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
+                  {t.casas.title}
+                </h2>
+                <p className="mt-5 text-lg text-muted-foreground">
+                  {t.casas.intro}
+                </p>
+              </div>
+            </Reveal>
 
-        {/* The casas */}
-        <section id="casas" className="scroll-mt-16 py-20">
-          <div className="mx-auto max-w-6xl px-4">
-            <SectionHeading eyebrow={t.casas.eyebrow} title={t.casas.title}>
-              {t.casas.intro}
-            </SectionHeading>
-
-            <div className="mt-12 grid gap-8 lg:grid-cols-3">
+            <div className="mt-12 grid gap-6">
               {t.casas.list.map((casa, i) => (
-                <Card
-                  key={casa.name}
-                  className="flex flex-col overflow-hidden pt-0"
-                >
-                  <div className="relative flex h-48 items-end p-5">
-                    <Image
-                      src={CASA_IMAGES[i].src}
-                      alt={CASA_IMAGES[i].alt}
-                      fill
-                      sizes="(min-width: 1024px) 33vw, 100vw"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/85 via-emerald-950/25 to-transparent" />
-                    <div className="relative text-white">
-                      <p className="text-2xl font-extrabold">{casa.name}</p>
-                      <p className="text-lg font-semibold text-amber-300">
-                        {casa.price}
-                        <span className="text-sm font-normal text-white/80">
-                          {" "}
-                          {t.casas.perNight}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-base font-medium leading-relaxed text-muted-foreground">
-                      {casa.tagline}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-1 flex-col gap-4">
-                    <ul className="grid gap-2 text-sm">
-                      <li className="flex items-center gap-2">
-                        <BedDouble
-                          className="h-4 w-4 text-emerald-700"
-                          aria-hidden
-                        />
-                        {t.casas.beds}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Bath className="h-4 w-4 text-emerald-700" aria-hidden />
-                        {t.casas.bath} · {casa.water}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <UtensilsCrossed
-                          className="h-4 w-4 text-emerald-700"
-                          aria-hidden
-                        />
-                        {t.casas.kitchen}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Sun className="h-4 w-4 text-emerald-700" aria-hidden />
-                        {casa.deck}
-                      </li>
-                    </ul>
-                    {casa.highlight ? (
-                      <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
-                        {casa.highlight}
-                      </p>
-                    ) : null}
-                    <div className="mt-auto">
-                      {AIRBNB_URLS[i] ? (
-                        <Button asChild className="w-full" size="lg">
-                          <a
-                            href={AIRBNB_URLS[i]}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {t.casas.airbnbCta}
-                          </a>
-                        </Button>
-                      ) : CAL_CONFIGURED ? (
-                        <BookButton className="w-full" notes={casa.name}>
-                          {t.casas.bookCta} {casa.name}
-                        </BookButton>
-                      ) : (
-                        <Button asChild className="w-full" size="lg">
-                          <a href="#contact">{t.casas.askCta}</a>
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <Reveal key={casa.name} delay={0.05}>
+                  <Lift>
+                    <article className="relative min-h-[440px] overflow-hidden rounded-3xl bg-emerald-950 sm:min-h-[480px]">
+                      <Image
+                        src={CASA_IMAGES[i].src}
+                        alt={CASA_IMAGES[i].alt}
+                        fill
+                        sizes="(min-width: 1280px) 1216px, 100vw"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/95 via-emerald-950/40 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6 text-white sm:p-10">
+                        <div>
+                          <h3 className="text-3xl font-medium tracking-tight sm:text-4xl">
+                            {casa.name}
+                          </h3>
+                          <p className="mt-1 text-xl font-semibold text-amber-300">
+                            {casa.price}
+                            <span className="text-sm font-normal text-white/80">
+                              {" "}
+                              {t.casas.perNight}
+                            </span>
+                          </p>
+                        </div>
+                        <p className="max-w-xl text-emerald-50">{casa.tagline}</p>
+                        <p className="max-w-xl text-sm uppercase tracking-wider text-white/75">
+                          {t.casas.beds} · {t.casas.bath} · {casa.water}
+                        </p>
+                        <p className="max-w-xl text-sm uppercase tracking-wider text-white/75">
+                          {t.casas.kitchen} · {casa.deck}
+                        </p>
+                        {casa.highlight ? (
+                          <p className="max-w-xl rounded-xl bg-amber-400/15 p-3 text-sm text-amber-200">
+                            {casa.highlight}
+                          </p>
+                        ) : null}
+                        <div className="mt-2">
+                          {AIRBNB_URLS[i] ? (
+                            <Button asChild size="lg" className={pillClasses("light")}>
+                              <a
+                                href={AIRBNB_URLS[i]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {t.casas.airbnbCta}
+                                <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                              </a>
+                            </Button>
+                          ) : CAL_CONFIGURED ? (
+                            <BookButton
+                              className={pillClasses("light")}
+                              notes={casa.name}
+                            >
+                              {t.casas.bookCta} {casa.name}
+                              <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                            </BookButton>
+                          ) : (
+                            <Button asChild size="lg" className={pillClasses("light")}>
+                              <a href="#contact">
+                                {t.casas.askCta}
+                                <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  </Lift>
+                </Reveal>
               ))}
             </div>
 
-            <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
-              {t.casas.note}
-            </p>
-          </div>
-        </section>
-
-        {/* Fishing & the area */}
-        <section
-          id="area"
-          className="scroll-mt-16 border-y bg-gradient-to-br from-emerald-950 to-teal-900 py-20 text-white"
-        >
-          <div className="mx-auto max-w-6xl px-4">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-bold uppercase tracking-widest text-amber-400">
-                {t.area.eyebrow}
+            <Reveal>
+              <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
+                {t.casas.note}
               </p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-                {t.area.title}
-              </h2>
-              <p className="mt-4 text-lg text-emerald-100">{t.area.sub}</p>
-            </div>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2">
-              {t.area.items.map(({ title, text }, i) => {
-                const Icon = AREA_ICONS[i];
-                return (
-                  <div
-                    key={title}
-                    className="rounded-xl border border-white/15 bg-white/5 p-6"
-                  >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-400 text-emerald-950">
-                      <Icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <h3 className="mt-4 text-xl font-bold">{title}</h3>
-                    <p className="mt-2 text-emerald-100">{text}</p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Fishing & adventure — numbered editorial rows, IFF insights pattern. */}
+        <section id="area" className="scroll-mt-16 border-t bg-background">
+          <div className="mx-auto max-w-6xl px-4 py-20">
+            <Reveal>
+              <div className="max-w-3xl">
+                <Eyebrow>{t.area.eyebrow}</Eyebrow>
+                <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
+                  {t.area.title}
+                </h2>
+                <p className="mt-5 text-lg text-muted-foreground">{t.area.sub}</p>
+              </div>
+            </Reveal>
+            <div className="mt-12">
+              {t.area.items.map(({ title, text }, i) => (
+                <Reveal key={title}>
+                  <div className="grid gap-3 border-t py-8 md:grid-cols-[80px_1fr_2fr] md:gap-8">
+                    <p className="text-sm font-bold uppercase tracking-widest text-emerald-700">
+                      {String(i + 1).padStart(2, "0")}
+                    </p>
+                    <h3 className="text-xl font-medium tracking-tight sm:text-2xl">
+                      {title}
+                    </h3>
+                    <p className="text-muted-foreground">{text}</p>
                   </div>
-                );
-              })}
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Know before you go */}
-        <section id="know" className="scroll-mt-16 py-20">
-          <div className="mx-auto max-w-6xl px-4">
-            <SectionHeading eyebrow={t.know.eyebrow} title={t.know.title}>
-              {t.know.sub}
-            </SectionHeading>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2">
+        {/* Know before you go — deep green band. */}
+        <section
+          id="know"
+          className="scroll-mt-16 bg-emerald-950 text-white"
+        >
+          <div className="mx-auto max-w-6xl px-4 py-20">
+            <Reveal>
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400">
+                  {t.know.eyebrow}
+                </p>
+                <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
+                  {t.know.title}
+                </h2>
+                <p className="mt-5 text-lg text-emerald-100">{t.know.sub}</p>
+              </div>
+            </Reveal>
+            <Stagger className="mt-14 grid gap-6 sm:grid-cols-2">
               {t.know.items.map(({ title, text }, i) => {
                 const Icon = KNOW_ICONS[i];
                 return (
-                  <Card key={title}>
-                    <CardHeader className="flex flex-row items-center gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white">
-                        <Icon className="h-5 w-5" aria-hidden />
-                      </span>
-                      <CardTitle className="text-lg">{title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{text}</p>
-                    </CardContent>
-                  </Card>
+                  <Item
+                    key={title}
+                    className="rounded-3xl border border-white/15 bg-white/5 p-8"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-400 text-emerald-950">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </span>
+                    <h3 className="mt-5 text-xl font-medium tracking-tight sm:text-2xl">
+                      {title}
+                    </h3>
+                    <p className="mt-3 text-emerald-100">{text}</p>
+                  </Item>
                 );
               })}
-            </div>
+            </Stagger>
           </div>
         </section>
 
         {/* Booking — renders only once NEXT_PUBLIC_CAL_LINK is set at build. */}
         {CAL_CONFIGURED ? (
-          <section id="book" className="scroll-mt-16 border-t bg-secondary py-20">
-            <div className="mx-auto max-w-6xl px-4">
-              <SectionHeading eyebrow={t.book.eyebrow} title={t.book.title}>
-                {t.book.sub}
-              </SectionHeading>
-              <div className="mt-10 rounded-xl border bg-card p-2 sm:p-4">
-                <BookingCalendar />
-              </div>
+          <section id="book" className="scroll-mt-16 border-t bg-background">
+            <div className="mx-auto max-w-6xl px-4 py-20">
+              <Reveal>
+                <div className="mx-auto max-w-2xl text-center">
+                  <Eyebrow>{t.book.eyebrow}</Eyebrow>
+                  <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
+                    {t.book.title}
+                  </h2>
+                  <p className="mt-5 text-lg text-muted-foreground">
+                    {t.book.sub}
+                  </p>
+                </div>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <div className="mt-10 rounded-3xl border bg-card p-2 sm:p-4">
+                  <BookingCalendar />
+                </div>
+              </Reveal>
             </div>
           </section>
         ) : null}
 
         {/* Contact */}
-        <section
-          id="contact"
-          className="scroll-mt-16 border-t bg-secondary py-20"
-        >
-          <div className="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-2">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-amber-600">
-                {t.contact.eyebrow}
-              </p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <section id="contact" className="scroll-mt-16 border-t bg-background">
+          <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 lg:grid-cols-2">
+            <Reveal>
+              <Eyebrow>{t.contact.eyebrow}</Eyebrow>
+              <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
                 {t.contact.title}
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
+              <p className="mt-5 text-lg text-muted-foreground">
                 {t.contact.sub}
               </p>
               <ul className="mt-8 grid gap-4">
@@ -390,32 +404,39 @@ export default async function Home({
                   <span className="font-medium">{t.contact.location}</span>
                 </li>
               </ul>
-            </div>
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <ContactForm labels={t.form} />
-            </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="rounded-3xl border bg-card p-6 shadow-sm sm:p-8">
+                <ContactForm labels={t.form} />
+              </div>
+            </Reveal>
           </div>
         </section>
       </main>
 
-      <footer className="border-t bg-emerald-950 py-10 text-emerald-100">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 text-center text-sm">
-          <p className="text-lg font-extrabold text-white">
-            Fischer <span className="text-amber-400">Tropitel</span>
-          </p>
-          <p>{t.footer.tagline}</p>
-          <p>
-            <a href={PHONE_HREF} className="hover:underline">
-              {PHONE}
-            </a>{" "}
-            ·{" "}
-            <a href={`mailto:${EMAIL}`} className="hover:underline">
-              {EMAIL}
-            </a>
-          </p>
-          <p className="text-emerald-300/70">
-            © {new Date().getFullYear()} Fischer Tropitel. {t.footer.rights}
-          </p>
+      <footer className="bg-emerald-950 py-14 text-emerald-100">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2">
+          <div>
+            <p className="text-2xl font-bold tracking-tight text-white">
+              Fischer <span className="text-amber-400">Tropitel</span>
+            </p>
+            <p className="mt-2">{t.footer.tagline}</p>
+          </div>
+          <div className="sm:text-right">
+            <p>
+              <a href={PHONE_HREF} className="hover:underline">
+                {PHONE}
+              </a>
+            </p>
+            <p className="mt-1">
+              <a href={`mailto:${EMAIL}`} className="hover:underline">
+                {EMAIL}
+              </a>
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto mt-10 max-w-6xl border-t border-white/15 px-4 pt-6 text-sm text-emerald-300/70">
+          © {new Date().getFullYear()} Fischer Tropitel. {t.footer.rights}
         </div>
       </footer>
     </>

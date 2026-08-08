@@ -48,6 +48,10 @@ interface Dictionary {
     ctaSecondary: string;
   };
   quickFacts: string[];
+  stats: {
+    eyebrow: string;
+    items: { value: string; caption: string }[];
+  };
   casas: {
     eyebrow: string;
     title: string;
@@ -129,6 +133,27 @@ export const dict: Record<Locale, Dictionary> = {
       "Manuel Antonio National Park nearby",
       "Each casa sleeps about 6",
     ],
+    stats: {
+      eyebrow: "Your vacation, our mountain",
+      items: [
+        {
+          value: "3",
+          caption: "fully furnished casas on one private jungle property",
+        },
+        {
+          value: "~6",
+          caption: "guests per casa — rent one, or bring everyone and take all three",
+        },
+        {
+          value: "20 min",
+          caption: "on foot from your door to natural hot springs",
+        },
+        {
+          value: "$150–250",
+          caption: "per night, depending on the casa and the season",
+        },
+      ],
+    },
     casas: {
       eyebrow: "The Casas",
       title: "Pick your casa",
@@ -281,6 +306,27 @@ export const dict: Record<Locale, Dictionary> = {
       "Cerca del Parque Nacional Manuel Antonio",
       "Cada casa aloja a unas 6 personas",
     ],
+    stats: {
+      eyebrow: "Sus vacaciones, nuestra montaña",
+      items: [
+        {
+          value: "3",
+          caption: "casas totalmente amuebladas en una propiedad privada en la selva",
+        },
+        {
+          value: "~6",
+          caption: "huéspedes por casa — alquile una, o venga con todos y tome las tres",
+        },
+        {
+          value: "20 min",
+          caption: "a pie desde su puerta hasta las aguas termales naturales",
+        },
+        {
+          value: "$150–250",
+          caption: "por noche, según la casa y la temporada",
+        },
+      ],
+    },
     casas: {
       eyebrow: "Las Casas",
       title: "Elija su casa",

@@ -12,16 +12,10 @@
 */
 
 :root {
-  --radius: 0.625rem;
+  /* IFF-style large radii: big rounded cards, pill buttons. */
+  --radius: 1rem;
 
-  /*
-    Default to a system stack: it renders instantly, needs no network at build
-    time, and avoids the EU privacy question around Google Fonts. Swap in
-    next/font (google or local) during branding if the client specified a
-    typeface — see references/brand-and-content.md.
-  */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  /* --font-sans comes from next/font (Fustat) via app/layout.tsx. */
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* ---- BRAND TOKENS: edit these ---- */
