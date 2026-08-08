@@ -109,9 +109,19 @@ export default async function Home({
       </header>
 
       <main id="top">
-        {/* Brand band: centered display type + pill CTA, IFF announcement style. */}
-        <section className="bg-emerald-950 text-white">
-          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:py-28">
+        {/* Hero: full-height property photo behind centered IFF-style display
+            type. A deep green wash keeps the text at readable contrast. */}
+        <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-emerald-950 text-white">
+          <Image
+            src="/images/hero.jpg"
+            alt="The Fischer Tropitel property in the jungle above Quepos"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-950/35 to-emerald-950/75" />
+          <div className="relative mx-auto max-w-4xl px-4 py-24 text-center sm:py-32">
             <Reveal immediate>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400">
                 {t.hero.eyebrow}
@@ -123,7 +133,7 @@ export default async function Home({
               </h1>
             </Reveal>
             <Reveal immediate delay={0.2}>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-100 sm:text-xl">
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-50 sm:text-xl">
                 {t.hero.sub}
               </p>
             </Reveal>
@@ -138,26 +148,6 @@ export default async function Home({
               </div>
             </Reveal>
           </div>
-        </section>
-
-        {/* Full-bleed property image card. */}
-        <section className="bg-emerald-950 pb-6">
-          <Reveal immediate delay={0.35} className="mx-auto max-w-7xl px-4">
-            <div className="relative h-[46vh] min-h-[320px] overflow-hidden rounded-3xl sm:h-[60vh]">
-              <Image
-                src="/images/hero.jpg"
-                alt="The Fischer Tropitel property in the jungle above Quepos"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/60 via-transparent to-transparent" />
-              <p className="absolute bottom-5 left-6 text-sm font-bold uppercase tracking-[0.2em] text-white/90">
-                Quepos · Costa Rica
-              </p>
-            </div>
-          </Reveal>
         </section>
 
         {/* Stats band — IFF "your experiences, our technologies" pattern. */}
