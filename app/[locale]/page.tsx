@@ -12,8 +12,8 @@ import {
 
 import { Item, Lift, Reveal, Stagger } from "@/components/animate";
 import { BookButton, BookingCalendar } from "@/components/booking";
+import { Highlights } from "@/components/highlights";
 import { SiteMenu } from "@/components/mobile-nav";
-import { Button } from "@/components/ui/button";
 import { ContactForm } from "@/components/contact-form";
 import { dict, type Locale } from "@/lib/i18n";
 
@@ -35,16 +35,34 @@ const CASA_IMAGES = [
   { src: "/images/casa-verde.jpg", alt: "Casa Verde exterior" },
 ];
 
+const HIGHLIGHT_IMAGES = [
+  { src: "/images/hero.jpg", alt: "Jungle around the Fischer Tropitel casas" },
+  { src: "/images/property-2.jpg", alt: "The gated entrance to the property" },
+  { src: "/images/property-3.jpg", alt: "Casa Verde against the jungle" },
+];
+
+// TODO: swap for real activity photos (boats, park, springs) when supplied —
+// these are property shots standing in.
+const AREA_IMAGES = [
+  "/images/property-2.jpg",
+  "/images/hero.jpg",
+  "/images/property-3.jpg",
+  "/images/casa-cascada.jpg",
+];
+
 const KNOW_ICONS = [Car, Zap, Leaf, CloudRain];
 
-/** IFF-style pill CTA: uppercase, letter-spaced, arrow. */
-function pillClasses(variant: "light" | "dark") {
-  const base =
-    "rounded-full px-7 py-6 text-sm font-bold uppercase tracking-widest";
-  return variant === "light"
-    ? `${base} bg-white text-emerald-900 hover:bg-amber-50`
-    : `${base} bg-emerald-900 text-white hover:bg-emerald-800`;
-}
+/*
+ * The signature button shape of this art direction: a pill rounded on the
+ * top-left and bottom-right corners only, extrabold uppercase label, arrow.
+ */
+const PILL =
+  "inline-flex items-center gap-2 rounded-tl-[24px] rounded-br-[24px] px-6 py-3 text-sm font-extrabold uppercase tracking-wider transition-colors";
+const PILL_ON_DARK = `${PILL} bg-white text-emerald-800 hover:bg-amber-100`;
+const PILL_ON_LIGHT = `${PILL} bg-emerald-800 text-white hover:bg-emerald-700`;
+
+const TEXT_LINK =
+  "inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-emerald-700 hover:text-emerald-900";
 
 function Eyebrow({
   children,
@@ -55,7 +73,7 @@ function Eyebrow({
 }) {
   return (
     <p
-      className={`text-sm font-bold uppercase tracking-[0.2em] ${
+      className={`text-sm font-extrabold uppercase tracking-[0.18em] ${
         onDark ? "text-amber-400" : "text-emerald-700"
       }`}
     >
@@ -72,28 +90,32 @@ export default async function Home({
   const { locale } = await params;
   const t = dict[locale as Locale];
 
+  const slides = t.highlights.items.map((item, i) => ({
+    ...HIGHLIGHT_IMAGES[i],
+    ...item,
+  }));
+
   return (
     <>
-      {/* IFF-style header: solid brand band, wordmark left, CTA + menu square right. */}
+      {/* Solid brand header: wordmark left; CTA + accent menu square right. */}
       <header className="sticky top-0 z-50 bg-emerald-950 text-white">
-        <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between pl-4">
+        <div className="relative mx-auto flex h-[70px] max-w-7xl items-center justify-between pl-4">
           <a href="#top" className="text-xl font-bold tracking-tight">
             Fischer <span className="text-amber-400">Tropitel</span>
           </a>
-          <div className="flex h-16 items-center gap-4">
+          <div className="flex h-[70px] items-center gap-5">
             <a
               href={t.nav.switchHref}
-              className="hidden text-sm font-semibold uppercase tracking-widest text-emerald-200 hover:text-white sm:block"
+              className="hidden text-sm font-extrabold uppercase tracking-wider text-emerald-200 hover:text-white sm:block"
             >
               {t.nav.switchLabel}
             </a>
-            <Button
-              asChild
-              size="sm"
-              className="hidden rounded-full bg-white px-5 font-bold uppercase tracking-widest text-emerald-900 hover:bg-amber-50 sm:inline-flex"
+            <a
+              href={CAL_CONFIGURED ? "#book" : "#contact"}
+              className={`hidden sm:inline-flex ${PILL_ON_DARK}`}
             >
-              <a href={CAL_CONFIGURED ? "#book" : "#contact"}>{t.nav.cta}</a>
-            </Button>
+              {t.nav.cta}
+            </a>
             <SiteMenu
               links={[
                 { href: "#casas", label: t.nav.casas },
@@ -109,57 +131,50 @@ export default async function Home({
       </header>
 
       <main id="top">
-        {/* Hero: full-height property photo behind centered IFF-style display
-            type. A deep green wash keeps the text at readable contrast. */}
-        <section className="relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-emerald-950 text-white">
-          <Image
-            src="/images/hero.jpg"
-            alt="The Fischer Tropitel property in the jungle above Quepos"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-emerald-950/35 to-emerald-950/75" />
-          <div className="relative mx-auto max-w-4xl px-4 py-24 text-center sm:py-32">
+        {/* Announcement band: centered display type over the brand color. */}
+        <section className="bg-emerald-950 text-white">
+          <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:py-24">
             <Reveal immediate>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400">
+              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-amber-400">
                 {t.hero.eyebrow}
               </p>
             </Reveal>
             <Reveal immediate delay={0.1}>
-              <h1 className="mt-6 text-4xl font-medium leading-tight tracking-tight sm:text-6xl">
+              <h1 className="mt-6 text-4xl font-medium leading-[1.2] tracking-tight sm:text-5xl">
                 {t.hero.title}
               </h1>
             </Reveal>
             <Reveal immediate delay={0.2}>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-50 sm:text-xl">
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-emerald-100">
                 {t.hero.sub}
               </p>
             </Reveal>
             <Reveal immediate delay={0.3}>
-              <div className="mt-10 flex flex-wrap justify-center gap-4">
-                <Button asChild size="lg" className={pillClasses("light")}>
-                  <a href="#casas">
-                    {t.hero.ctaPrimary}
-                    <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
-                  </a>
-                </Button>
+              <div className="mt-9 flex justify-center">
+                <a href="#casas" className={PILL_ON_DARK}>
+                  {t.hero.ctaPrimary}
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </a>
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* Stats band — IFF "your experiences, our technologies" pattern. */}
+        {/* Image carousel with white content card + numeric pagination. */}
+        <section aria-label={t.highlights.eyebrow}>
+          <Highlights slides={slides} />
+        </section>
+
+        {/* Stats band. */}
         <section className="bg-background">
-          <div className="mx-auto max-w-6xl px-4 py-20">
+          <div className="mx-auto max-w-7xl px-4 py-20">
             <Reveal>
               <Eyebrow>{t.stats.eyebrow}</Eyebrow>
             </Reveal>
-            <Stagger className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
+            <Stagger className="mt-12 grid grid-cols-2 gap-x-8 gap-y-12 lg:grid-cols-4">
               {t.stats.items.map(({ value, caption }) => (
                 <Item key={caption}>
-                  <p className="text-4xl font-medium tracking-tight text-emerald-900 sm:text-5xl">
+                  <p className="text-4xl font-extrabold tracking-tight text-emerald-700 sm:text-5xl">
                     {value}
                   </p>
                   <p className="mt-3 text-muted-foreground">{caption}</p>
@@ -169,13 +184,12 @@ export default async function Home({
           </div>
         </section>
 
-        {/* The casas — stacked full-width image cards, IFF solutions pattern. */}
-        <section id="casas" className="scroll-mt-16 border-t bg-background">
-          <div className="mx-auto max-w-7xl px-4 py-20">
+        {/* The casas — stacked full-width image cards. */}
+        <section id="casas" className="scroll-mt-[70px] bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16">
             <Reveal>
               <div className="max-w-3xl">
-                <Eyebrow>{t.casas.eyebrow}</Eyebrow>
-                <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
+                <h2 className="text-3xl font-medium tracking-tight sm:text-5xl">
                   {t.casas.title}
                 </h2>
                 <p className="mt-5 text-lg text-muted-foreground">
@@ -186,69 +200,62 @@ export default async function Home({
 
             <div className="mt-12 grid gap-6">
               {t.casas.list.map((casa, i) => (
-                <Reveal key={casa.name} delay={0.05}>
+                <Reveal key={casa.name}>
                   <Lift>
-                    <article className="relative min-h-[440px] overflow-hidden rounded-3xl bg-emerald-950 sm:min-h-[480px]">
+                    <article className="relative min-h-[460px] overflow-hidden rounded-2xl bg-emerald-950">
                       <Image
                         src={CASA_IMAGES[i].src}
                         alt={CASA_IMAGES[i].alt}
                         fill
-                        sizes="(min-width: 1280px) 1216px, 100vw"
+                        sizes="(min-width: 1280px) 1248px, 100vw"
                         className="object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/95 via-emerald-950/40 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6 text-white sm:p-10">
-                        <div>
-                          <h3 className="text-3xl font-medium tracking-tight sm:text-4xl">
-                            {casa.name}
-                          </h3>
-                          <p className="mt-1 text-xl font-semibold text-amber-300">
-                            {casa.price}
-                            <span className="text-sm font-normal text-white/80">
-                              {" "}
-                              {t.casas.perNight}
-                            </span>
-                          </p>
-                        </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/95 via-emerald-950/35 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-3 p-6 text-white sm:p-10">
+                        <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                          {casa.name}
+                        </h3>
+                        <p className="text-lg font-bold text-amber-300">
+                          {casa.price}
+                          <span className="text-sm font-normal text-white/80">
+                            {" "}
+                            {t.casas.perNight}
+                          </span>
+                        </p>
                         <p className="max-w-xl text-emerald-50">{casa.tagline}</p>
                         <p className="max-w-xl text-sm uppercase tracking-wider text-white/75">
-                          {t.casas.beds} · {t.casas.bath} · {casa.water}
-                        </p>
-                        <p className="max-w-xl text-sm uppercase tracking-wider text-white/75">
-                          {t.casas.kitchen} · {casa.deck}
+                          {t.casas.beds} · {t.casas.bath} · {casa.water} ·{" "}
+                          {casa.deck}
                         </p>
                         {casa.highlight ? (
                           <p className="max-w-xl rounded-xl bg-amber-400/15 p-3 text-sm text-amber-200">
                             {casa.highlight}
                           </p>
                         ) : null}
-                        <div className="mt-2">
+                        <div className="mt-3">
                           {AIRBNB_URLS[i] ? (
-                            <Button asChild size="lg" className={pillClasses("light")}>
-                              <a
-                                href={AIRBNB_URLS[i]}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {t.casas.airbnbCta}
-                                <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
-                              </a>
-                            </Button>
+                            <a
+                              href={AIRBNB_URLS[i]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={PILL_ON_DARK}
+                            >
+                              {t.casas.airbnbCta}
+                              <ArrowRight className="h-4 w-4" aria-hidden />
+                            </a>
                           ) : CAL_CONFIGURED ? (
                             <BookButton
-                              className={pillClasses("light")}
+                              className={`h-auto ${PILL_ON_DARK} rounded-tr-none rounded-bl-none`}
                               notes={casa.name}
                             >
                               {t.casas.bookCta} {casa.name}
-                              <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                              <ArrowRight className="h-4 w-4" aria-hidden />
                             </BookButton>
                           ) : (
-                            <Button asChild size="lg" className={pillClasses("light")}>
-                              <a href="#contact">
-                                {t.casas.askCta}
-                                <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
-                              </a>
-                            </Button>
+                            <a href="#contact" className={PILL_ON_DARK}>
+                              {t.casas.askCta}
+                              <ArrowRight className="h-4 w-4" aria-hidden />
+                            </a>
                           )}
                         </div>
                       </div>
@@ -259,16 +266,16 @@ export default async function Home({
             </div>
 
             <Reveal>
-              <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
+              <p className="mt-8 max-w-2xl text-sm text-muted-foreground">
                 {t.casas.note}
               </p>
             </Reveal>
           </div>
         </section>
 
-        {/* Fishing & adventure — numbered editorial rows, IFF insights pattern. */}
-        <section id="area" className="scroll-mt-16 border-t bg-background">
-          <div className="mx-auto max-w-6xl px-4 py-20">
+        {/* Fishing & adventure — image-topped insight cards. */}
+        <section id="area" className="scroll-mt-[70px] border-t bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16">
             <Reveal>
               <div className="max-w-3xl">
                 <Eyebrow>{t.area.eyebrow}</Eyebrow>
@@ -278,35 +285,46 @@ export default async function Home({
                 <p className="mt-5 text-lg text-muted-foreground">{t.area.sub}</p>
               </div>
             </Reveal>
-            <div className="mt-12">
+            <Stagger className="mt-12 grid gap-6 sm:grid-cols-2">
               {t.area.items.map(({ title, text }, i) => (
-                <Reveal key={title}>
-                  <div className="grid gap-3 border-t py-8 md:grid-cols-[80px_1fr_2fr] md:gap-8">
-                    <p className="text-sm font-bold uppercase tracking-widest text-emerald-700">
-                      {String(i + 1).padStart(2, "0")}
-                    </p>
-                    <h3 className="text-xl font-medium tracking-tight sm:text-2xl">
+                <Item
+                  key={title}
+                  className="overflow-hidden rounded-2xl border bg-card"
+                >
+                  <div className="relative h-52">
+                    <Image
+                      src={AREA_IMAGES[i]}
+                      alt=""
+                      fill
+                      sizes="(min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-7">
+                    <h3 className="text-xl font-bold tracking-tight sm:text-2xl">
                       {title}
                     </h3>
-                    <p className="text-muted-foreground">{text}</p>
+                    <p className="mt-3 text-muted-foreground">{text}</p>
+                    <a href="#contact" className={`mt-5 ${TEXT_LINK}`}>
+                      {t.casas.askCta}
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </a>
                   </div>
-                </Reveal>
+                </Item>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
 
-        {/* Know before you go — deep green band. */}
+        {/* Know before you go — brand-color band. */}
         <section
           id="know"
-          className="scroll-mt-16 bg-emerald-950 text-white"
+          className="scroll-mt-[70px] bg-emerald-950 text-white"
         >
-          <div className="mx-auto max-w-6xl px-4 py-20">
+          <div className="mx-auto max-w-7xl px-4 py-20">
             <Reveal>
-              <div className="mx-auto max-w-2xl text-center">
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400">
-                  {t.know.eyebrow}
-                </p>
+              <div className="max-w-3xl">
+                <Eyebrow onDark>{t.know.eyebrow}</Eyebrow>
                 <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
                   {t.know.title}
                 </h2>
@@ -319,12 +337,12 @@ export default async function Home({
                 return (
                   <Item
                     key={title}
-                    className="rounded-3xl border border-white/15 bg-white/5 p-8"
+                    className="rounded-2xl border border-white/15 bg-white/5 p-8"
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-400 text-emerald-950">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-tl-[20px] rounded-br-[20px] bg-amber-400 text-emerald-950">
                       <Icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <h3 className="mt-5 text-xl font-medium tracking-tight sm:text-2xl">
+                    <h3 className="mt-5 text-xl font-bold tracking-tight sm:text-2xl">
                       {title}
                     </h3>
                     <p className="mt-3 text-emerald-100">{text}</p>
@@ -337,10 +355,10 @@ export default async function Home({
 
         {/* Booking — renders only once NEXT_PUBLIC_CAL_LINK is set at build. */}
         {CAL_CONFIGURED ? (
-          <section id="book" className="scroll-mt-16 border-t bg-background">
-            <div className="mx-auto max-w-6xl px-4 py-20">
+          <section id="book" className="scroll-mt-[70px] bg-background">
+            <div className="mx-auto max-w-7xl px-4 py-16">
               <Reveal>
-                <div className="mx-auto max-w-2xl text-center">
+                <div className="max-w-3xl">
                   <Eyebrow>{t.book.eyebrow}</Eyebrow>
                   <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
                     {t.book.title}
@@ -351,7 +369,7 @@ export default async function Home({
                 </div>
               </Reveal>
               <Reveal delay={0.1}>
-                <div className="mt-10 rounded-3xl border bg-card p-2 sm:p-4">
+                <div className="mt-10 rounded-2xl border bg-card p-2 sm:p-4">
                   <BookingCalendar />
                 </div>
               </Reveal>
@@ -360,8 +378,11 @@ export default async function Home({
         ) : null}
 
         {/* Contact */}
-        <section id="contact" className="scroll-mt-16 border-t bg-background">
-          <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 lg:grid-cols-2">
+        <section
+          id="contact"
+          className="scroll-mt-[70px] border-t bg-background"
+        >
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-2">
             <Reveal>
               <Eyebrow>{t.contact.eyebrow}</Eyebrow>
               <h2 className="mt-4 text-3xl font-medium tracking-tight sm:text-5xl">
@@ -396,7 +417,7 @@ export default async function Home({
               </ul>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="rounded-3xl border bg-card p-6 shadow-sm sm:p-8">
+              <div className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
                 <ContactForm labels={t.form} />
               </div>
             </Reveal>
@@ -404,14 +425,39 @@ export default async function Home({
         </section>
       </main>
 
-      <footer className="bg-emerald-950 py-14 text-emerald-100">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2">
+      {/* Footer: brand band with link columns and a legal row. */}
+      <footer className="bg-emerald-950 pt-14 text-emerald-100">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:grid-cols-3">
           <div>
             <p className="text-2xl font-bold tracking-tight text-white">
               Fischer <span className="text-amber-400">Tropitel</span>
             </p>
-            <p className="mt-2">{t.footer.tagline}</p>
+            <p className="mt-3">{t.footer.tagline}</p>
           </div>
+          <nav aria-label="Footer">
+            <ul className="grid gap-2">
+              {[
+                { href: "#casas", label: t.nav.casas },
+                { href: "#area", label: t.nav.area },
+                { href: "#know", label: t.nav.know },
+                { href: "#contact", label: t.nav.contact },
+              ].map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className="hover:text-white hover:underline">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a
+                  href={t.nav.switchHref}
+                  className="font-semibold text-amber-300 hover:underline"
+                >
+                  {t.nav.switchLabel}
+                </a>
+              </li>
+            </ul>
+          </nav>
           <div className="sm:text-right">
             <p>
               <a href={PHONE_HREF} className="hover:underline">
@@ -423,10 +469,15 @@ export default async function Home({
                 {EMAIL}
               </a>
             </p>
+            <p className="mt-3 text-sm text-emerald-300/80">
+              {t.contact.location}
+            </p>
           </div>
         </div>
-        <div className="mx-auto mt-10 max-w-6xl border-t border-white/15 px-4 pt-6 text-sm text-emerald-300/70">
-          © {new Date().getFullYear()} Fischer Tropitel. {t.footer.rights}
+        <div className="mx-auto mt-10 max-w-7xl px-4">
+          <div className="border-t border-white/15 py-6 text-sm text-emerald-300/70">
+            © {new Date().getFullYear()} Fischer Tropitel. {t.footer.rights}
+          </div>
         </div>
       </footer>
     </>

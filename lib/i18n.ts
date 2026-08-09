@@ -48,6 +48,10 @@ interface Dictionary {
     ctaSecondary: string;
   };
   quickFacts: string[];
+  highlights: {
+    eyebrow: string;
+    items: { title: string; text: string; cta: string; href: string }[];
+  };
   stats: {
     eyebrow: string;
     items: { value: string; caption: string }[];
@@ -133,6 +137,29 @@ export const dict: Record<Locale, Dictionary> = {
       "Manuel Antonio National Park nearby",
       "Each casa sleeps about 6",
     ],
+    highlights: {
+      eyebrow: "Life on the mountain",
+      items: [
+        {
+          title: "Coffee with a waterfall view",
+          text: "The casas look out over the river and its waterfall — the soundtrack to your morning.",
+          cta: "See the casas",
+          href: "#casas",
+        },
+        {
+          title: "The sportfishing that made Quepos famous",
+          text: "We found this mountain on a fishing trip and never really left. Local captains can take you out for the day.",
+          cta: "Explore the area",
+          href: "#area",
+        },
+        {
+          title: "Hot springs at the end of a jungle trail",
+          text: "A 20-minute hike from your door ends at natural hot springs our guests get to use.",
+          cta: "Explore the area",
+          href: "#area",
+        },
+      ],
+    },
     stats: {
       eyebrow: "Your vacation, our mountain",
       items: [
@@ -306,6 +333,29 @@ export const dict: Record<Locale, Dictionary> = {
       "Cerca del Parque Nacional Manuel Antonio",
       "Cada casa aloja a unas 6 personas",
     ],
+    highlights: {
+      eyebrow: "La vida en la montaña",
+      items: [
+        {
+          title: "Café con vista a la catarata",
+          text: "Las casas miran al río y su catarata — la banda sonora de su mañana.",
+          cta: "Ver las casas",
+          href: "#casas",
+        },
+        {
+          title: "La pesca deportiva que hizo famoso a Quepos",
+          text: "Encontramos esta montaña en un viaje de pesca y nunca nos fuimos del todo. Capitanes locales pueden llevarlo a pescar por el día.",
+          cta: "Explorar la zona",
+          href: "#area",
+        },
+        {
+          title: "Aguas termales al final de un sendero",
+          text: "Una caminata de 20 minutos desde su puerta termina en aguas termales naturales que nuestros huéspedes pueden usar.",
+          cta: "Explorar la zona",
+          href: "#area",
+        },
+      ],
+    },
     stats: {
       eyebrow: "Sus vacaciones, nuestra montaña",
       items: [
