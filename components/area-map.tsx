@@ -354,28 +354,44 @@ export function AreaMap({
             .setLngLat(HOUSE)
             .addTo(m);
 
-          m.on("mousemove", "places", (e) => {
-            const f = e.features?.[0];
-            if (!f) return;
-            setHoverId(String(f.properties?.id));
-            m.getCanvas().style.cursor = "pointer";
+          /*
+           * The drawn dot is only ~9px across, which is a fiddly thing to hit
+           * — the pointer has to land almost dead centre, and the coastal
+           * places sit close together. So hover and click search a box around
+           * the pointer rather than the exact pixel under it.
+           *
+           * An invisible wider circle layer would be the tidier trick, but
+           * MapLibre doesn't hit-test features it hasn't actually drawn, so a
+           * `circle-opacity: 0` layer is never returned by a query.
+           */
+          const HIT = 14;
+          const hitAt = (p: { x: number; y: number }) =>
+            m.queryRenderedFeatures(
+              [
+                [p.x - HIT, p.y - HIT],
+                [p.x + HIT, p.y + HIT],
+              ],
+              { layers: ["places"] },
+            )[0];
+
+          m.on("mousemove", (e) => {
+            const f = hitAt(e.point);
+            setHoverId(f ? String(f.properties?.id) : null);
+            m.getCanvas().style.cursor = f ? "pointer" : "default";
           });
-          m.on("mouseleave", "places", () => {
+          m.on("mouseout", () => {
             setHoverId(null);
             m.getCanvas().style.cursor = "default";
           });
-          m.on("click", "places", (e) => {
-            const f = e.features?.[0];
-            if (!f) return;
+          m.on("click", (e) => {
+            const f = hitAt(e.point);
+            // A click on empty map closes the open card.
+            if (!f) {
+              setActiveId(null);
+              return;
+            }
             const id = String(f.properties?.id);
             setActiveId((cur) => (cur === id ? null : id));
-          });
-          // A click on empty map — anywhere that isn't a dot — closes the
-          // card. The dot handler above runs for the same click, so this one
-          // only acts when nothing was hit.
-          m.on("click", (e) => {
-            const hit = m.queryRenderedFeatures(e.point, { layers: ["places"] });
-            if (!hit.length) setActiveId(null);
           });
 
           setReady(true);
