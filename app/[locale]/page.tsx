@@ -51,9 +51,9 @@ const GOOGLE_LISTING_URL =
  * The portrait shots (900x1200) sit in a wide card, so `object-cover` throws
  * most of the frame away; `position` biases the crop onto the house.
  *
- * porch.jpg came embedded in the revisions doc at 820x341 — Madi offered the
- * original ("let me know if you need it"); swap in the full-res file when it
- * arrives.
+ * The two porch-deck shots are the full-resolution originals of the porch
+ * photo Madi embedded in her revisions doc. That deck is shared by Casa
+ * Cascada and Loads of Toads, so both slideshows include it.
  */
 const CASA_IMAGES: {
   src: string;
@@ -62,8 +62,12 @@ const CASA_IMAGES: {
 }[][] = [
   [
     {
-      src: "/images/porch.jpg",
+      src: "/images/porch-deck-1.jpg",
       alt: "The covered porch shared by Casa Cascada and Loads of Toads, with wooden chairs facing the jungle",
+    },
+    {
+      src: "/images/porch-deck-2.jpg",
+      alt: "Looking down the shared porch toward the outdoor bar and the jungle",
     },
     {
       src: "/images/casa-cascada-door.jpg",
@@ -93,6 +97,10 @@ const CASA_IMAGES: {
       src: "/images/bedroom-2.jpg",
       alt: "A bedroom at the casas, with the jungle outside the window",
     },
+    {
+      src: "/images/porch-deck-2.jpg",
+      alt: "Looking down the shared porch toward the outdoor bar and the jungle",
+    },
   ],
   [
     {
@@ -107,7 +115,12 @@ const CASA_IMAGES: {
 ];
 
 const HIGHLIGHT_IMAGES = [
-  { src: "/images/hero.jpg", alt: "Jungle around the Fischer Tropitel casas" },
+  // The porch photo from Madi's revisions doc, replacing the old front-of-house
+  // shot on the first carousel card.
+  {
+    src: "/images/porch-deck-1.jpg",
+    alt: "The shared porch's outdoor bar, rocking chairs and hammock swing",
+  },
   { src: "/images/property-2.jpg", alt: "The gated entrance to the property" },
   // property-3 moved into Casa Verde's slideshow; this wide driveway shot
   // keeps the carousel from repeating it.
@@ -326,6 +339,7 @@ export default async function Home({
                       mapsCta: t.area.mapsCta,
                       listingUrl: GOOGLE_LISTING_URL,
                       listingCta: t.area.listingCta,
+                      closeCta: t.area.closeCta,
                     }}
                   />
                 </div>
